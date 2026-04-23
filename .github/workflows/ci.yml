@@ -1,4 +1,4 @@
-name: CI - Java Maven
+name: CI Pipeline
 
 on:
   push:
@@ -11,17 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repositorio
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Configurar Java 17
+      - name: Configurar Java
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Compilar y ejecutar tests
-        run: mvn clean test
+      - name: Compilar y ejecutar tests (JUnit + Cucumber)
+        run: mvn clean install
 
-      - name: Mostrar resultados de tests
-        run: cat target/surefire-reports/*.txt
+      - name: Subir reportes de tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportes-tests
+          path: target/surefire-reports
