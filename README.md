@@ -1,138 +1,295 @@
-# Proyecto de Automatización de Pruebas con Integración Continua
+# Proyecto de Automatización de Pruebas - Java + Maven + CI + BDD
 
-## 1. Objetivo del proyecto
+## Descripción
 
-El objetivo de este proyecto es implementar un flujo básico de integración continua en un entorno Java, aplicando buenas prácticas de automatización de pruebas, gestión de dependencias y control de versiones.
+Este proyecto tiene como objetivo implementar un flujo completo de pruebas automatizadas en un entorno Java, incorporando buenas prácticas de:
 
-Se busca asegurar la calidad del software mediante la ejecución automática de pruebas ante cada cambio en el código.
+- Integración Continua (CI)
+- Desarrollo guiado por comportamiento (BDD)
+- Automatización de pruebas unitarias
+- Pruebas de rendimiento
+- Métricas y monitoreo
 
 ---
 
-## 2. Tecnologías utilizadas
+# Actividad 1: Integración Continua y Pruebas Unitarias
+
+## Objetivo
+
+Implementar un flujo básico de CI con Maven, Git y ejecución automática de pruebas.
+
+---
+
+## Estructura del proyecto
+
+```
+src/
+ ├── main/java/com/cristianpino/
+ │    └── Calculadora.java
+ ├── test/java/com/cristianpino/
+ │    └── CalculadoraTest.java
+target/
+pom.xml
+.gitignore
+```
+
+---
+
+## Tecnologías utilizadas
 
 - Java 17
-- Maven (gestión de dependencias y build)
-- JUnit 5 (testing)
-- Git (control de versiones)
-- GitHub (repositorio remoto)
-- GitHub Actions (CI/CD)
+- Maven
+- JUnit 5
+- Git + GitHub
+- GitHub Actions
 
 ---
 
-## 3. Estructura del proyecto
+## Pruebas unitarias
 
-```
-proyecto-pruebas/
-│
-├── src/
-│   ├── main/java/com/cristianpino/
-│   │   └── Calculadora.java
-│   │
-│   └── test/java/com/cristianpino/
-│       └── CalculadoraTest.java
-│
-├── target/
-├── .github/workflows/ci.yml
-├── .gitignore
-└── pom.xml
-```
+Se implementaron pruebas atómicas e independientes:
 
----
+- Suma
+- Resta
+- División
+- División por cero
 
-## 4. Gestión de dependencias
+Ejemplo:
 
-El proyecto utiliza Maven para la gestión de dependencias. Se configuró JUnit 5 como framework de pruebas, junto con el plugin `maven-surefire-plugin` para la ejecución automática de tests.
-
----
-
-## 5. Pruebas unitarias
-
-Se implementaron pruebas unitarias atómicas e independientes para validar:
-
-- Operación de suma
-- Operación de resta
-- Operación de división
-- Manejo de errores (división por cero)
-
-Se utilizó `@BeforeEach` para asegurar el aislamiento entre pruebas y evitar efectos colaterales.
-
----
-
-## 6. Ejecución local
-
-Para ejecutar el proyecto y las pruebas:
-
-```
-mvn clean test
-```
-
-Resultado esperado:
-
-```
-BUILD SUCCESS
+```java
+@Test
+void testSumar() {
+    assertEquals(5, calc.sumar(2, 3));
+}
 ```
 
 ---
 
-## 7. Control de versiones
+## Integración Continua (CI)
 
-Se utilizó Git como sistema de control de versiones, aplicando una estrategia basada en ramas:
+Se configuró un pipeline en GitHub Actions que:
 
-- `main`: rama principal
-- `feature/calculadora`: desarrollo de funcionalidades
+- Compila el proyecto
+- Ejecuta pruebas automáticamente
+- Genera reportes
 
-Esto permite trabajar de forma aislada y facilita la integración mediante Pull Requests.
-
----
-
-## 8. Integración Continua (CI)
-
-Se implementó un pipeline utilizando GitHub Actions mediante el archivo:
+Archivo:
 
 ```
 .github/workflows/ci.yml
 ```
 
-### Funcionalidades del pipeline:
-
-- Se ejecuta automáticamente en cada push y pull request
-- Configura el entorno con Java 17
-- Compila el proyecto con Maven
-- Ejecuta pruebas unitarias
-- Muestra resultados de ejecución
-
-Esto permite detectar errores de forma temprana y asegurar la calidad del código.
-
 ---
 
-## 9. Reportes y resultados
+## Reportes
 
-Los resultados de las pruebas se generan en:
+Los resultados de pruebas se almacenan en:
 
 ```
-target/surefire-reports/
+target/surefire-reports
 ```
 
-Estos reportes permiten validar el estado de las pruebas tanto en entorno local como en el pipeline CI.
+---
+
+## Estrategia Git
+
+Se utilizaron ramas para organizar el desarrollo:
+
+- main → versión estable
+- feature/calculadora → desarrollo pruebas unitarias
 
 ---
 
-## 10. Buenas prácticas aplicadas
-
-- Pruebas unitarias atómicas e independientes
-- Uso de nombres descriptivos en tests
-- Separación de responsabilidades
-- Uso de `.gitignore` para evitar archivos innecesarios
-- Automatización mediante CI
-- Uso de ramas para trabajo colaborativo
+# Actividad 2: BDD, Performance y Observabilidad
 
 ---
 
-## 11. Evidencia
+## 1. Sesión Three Amigos
 
-Se incluyen capturas de:
+### Roles
 
-- Ejecución local de pruebas
-- Ejecución del pipeline en GitHub Actions
-- Historial de commits
-- Estructura del proyecto
+- Product Owner: define requerimientos
+- QA: define escenarios
+- Developer: implementa lógica
+
+---
+
+### Funcionalidad: Login
+
+### Criterios de aceptación
+
+- Usuario válido → acceso permitido
+- Usuario inválido → acceso denegado
+
+---
+
+## 2. Escenarios Gherkin
+
+```gherkin
+Feature: Login de usuario
+
+Scenario: Login exitoso
+  Given el usuario está en la página de login
+  When ingresa credenciales válidas
+  Then accede al sistema
+
+Scenario Outline: Login inválido
+  Given el usuario está en la página de login
+  When ingresa "<usuario>" y "<password>"
+  Then el acceso es rechazado
+
+Examples:
+  | usuario | password |
+  | admin   | 1234     |
+  | user    | wrong    |
+```
+
+---
+
+## 3. Step Definitions (Java + Cucumber)
+
+Se implementaron usando buenas prácticas:
+
+- Métodos independientes
+- Validaciones claras
+- Sin dependencias entre tests
+
+---
+
+## 4. Integración BDD en CI
+
+El pipeline ejecuta automáticamente:
+
+```
+mvn clean install
+```
+
+Incluyendo:
+
+- Pruebas unitarias
+- Escenarios BDD
+
+---
+
+## 5. Reporte HTML BDD
+
+Se configuró Cucumber para generar:
+
+```
+target/cucumber-report.html
+```
+
+Este reporte permite visualizar:
+
+- Escenarios ejecutados
+- Resultados
+- Steps detallados
+
+---
+
+## 6. Prueba de Performance (simulada)
+
+Se diseñó un script con k6:
+
+```javascript
+export let options = {
+  vus: 10,
+  duration: "10s",
+};
+```
+
+---
+
+### Resultados simulados
+
+```
+http_reqs: 100
+latencia promedio: 120ms
+errores: 0%
+```
+
+---
+
+### Métricas analizadas
+
+- TPS (Transacciones por segundo)
+- Latencia
+- Tasa de errores
+
+---
+
+## 7. Métricas y Dashboard
+
+Se propone integrar métricas en herramientas como:
+
+- GitHub Actions
+- Grafana
+- Jenkins
+
+---
+
+### Métricas consideradas
+
+**Funcionales:**
+
+- % escenarios exitosos
+- número de fallos
+
+**Performance:**
+
+- TPS
+- latencia
+- errores
+
+---
+
+## 8. Alertas automáticas
+
+Se definen alertas en caso de:
+
+- Fallo de pruebas
+- Alta latencia
+- Errores en performance
+
+---
+
+### Notificaciones
+
+- Correo electrónico
+- Slack
+- Pipeline CI (estado rojo)
+
+---
+
+## Valor
+
+Permite:
+
+- Detección temprana de errores
+- Mejora continua
+- Mayor calidad del software
+
+---
+
+# Evidencias (incluidas en informe)
+
+- Ejecución de tests
+- Pipeline CI exitoso
+- Reporte HTML
+- Escenarios BDD
+- Resultados de performance
+
+---
+
+# Conclusión
+
+Se implementó un flujo completo de pruebas automatizadas que integra:
+
+- Desarrollo basado en pruebas
+- Automatización
+- Integración continua
+- Monitoreo y métricas
+
+Este enfoque permite mejorar la calidad del software y optimizar el trabajo colaborativo del equipo.
+
+---
